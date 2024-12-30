@@ -10,11 +10,15 @@ BASE_URL = 'https://api.themoviedb.org/3/'
 
 # Funkció a legnépszerűbb filmek lekérésére a TMDB API-ról
 def get_popular_movies():
-    url = f"{BASE_URL}movie/popular?api_key={API_KEY}&language=en-US&page=1"
-    response = requests.get(url)
-    print(response.status_code)  # Ellenőrizd a HTTP státuszkódot
-    print(response.json())       # Nyomtasd ki az API válaszát
-    return response.json().get('results', [])
+    try:
+        url = f"{BASE_URL}movie/popular?api_key={API_KEY}&language=en-US&page=1"
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        return response.json().get('results', [])
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching movies: {e}")
+        return []
+
 
 # Főoldal route
 @app.route('/')
