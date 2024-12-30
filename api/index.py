@@ -3,19 +3,22 @@ import requests
 
 # Flask alkalmazás inicializálása
 app = Flask(__name__)
-# TMDB API kulcs
+
+# TMDB API kulcs (cseréld ki a saját kulcsodra)
+API_KEY = 'b0ff54d9f03d74a916ff2ecc5fa2ccd0'
 BASE_URL = 'https://api.themoviedb.org/3/'
 
 # Funkció a legnépszerűbb filmek lekérésére a TMDB API-ról
 def get_popular_movies():
-    url = f"{BASE_URL}movie/popular?api_key={b0ff54d9f03d74a916ff2ecc5fa2ccd0}&language=en-US&page=1"
+    url = f"{BASE_URL}movie/popular?api_key={API_KEY}&language=en-US&page=1"
     response = requests.get(url)
-    return response.json()['results']
+    print(response.status_code)  # Ellenőrizd a HTTP státuszkódot
+    print(response.json())       # Nyomtasd ki az API válaszát
+    return response.json().get('results', [])
 
-# Főoldal route, ahol megjelenítjük a népszerű filmeket
+# Főoldal route
 @app.route('/')
 def index():
-    # Filmek lekérése
     movies = get_popular_movies()
     return render_template('index.html', movies=movies)
 
