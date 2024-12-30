@@ -21,7 +21,7 @@ def get_popular_movies():
 
 
 # Főoldal route
-@app.route('/')
+@app.route('/api/index')
 def index():
     movies = get_popular_movies()
     return render_template('index.html', movies=movies)
