@@ -17,11 +17,7 @@
     },
     {
       "src": "api/static/(.*)",
-      "dest": "api/static/$1"
-    },
-    {
-      "src": "app/static/**/*",
-      "use": "@vercel/static"
+      "dest": "/api/static/css/styles.css"
     }
   ]
 }
