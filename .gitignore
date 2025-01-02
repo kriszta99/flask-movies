@@ -1,13 +1,28 @@
-.vercel
+# Log files
 *.log
-*.pyc
-__pycache__
 
-# Environments 
-.env 
-.venv 
-env/ 
-venv/ 
-ENV/ 
-env.bak/ 
-venv.bak/ 
+# Compiled Python files
+*.pyc
+__pycache__/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Flask specific
+instance/
+config.py
+__init__.py
+
+# Static and media files (ha generált tartalom, külön ellenőrizni kell)
+# Ha nem szeretnéd kizárni, távolítsd el ezt a sort
+static/
+media/
+
+# Vercel configuration (opcionális, ha privát)
+.vercel/
