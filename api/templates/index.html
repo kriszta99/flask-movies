@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Popular Movies</title>
+    <title>Filmes ajanló rendszer</title>
 </head>
 <body>
-    <h1>Popular Movies</h1>
-    <div class="movies">
-        {% for movie in movies %}
-            <div class="movie">
-                <h2>{{ movie['title'] }}</h2>
-                <img src="https://image.tmdb.org/t/p/w500{{ movie['poster_path'] }}" alt="{{ movie['title'] }}" />
-                <p><strong>Release Date:</strong> {{ movie['release_date'] }}</p>
-                <p><strong>Rating:</strong> {{ movie['vote_average'] }}</p>
-                <p><strong>Genere:</strong> {{ movie['genre_ids'] }}</p>
+    <h1>Movie Recommendation</h1>
 
-            </div>
-        {% endfor %}
-    </div>
+    <!-- Kategória kiválasztása -->
+    <form method="POST">
+        <label for="genre">Select a Genre:</label>
+        <select name="genre" id="genre" required>
+            <option value="" disabled selected>Choose a genre</option>
+            {% for genre in genres %}
+                <option value="{{ genre['id'] }}">{{ genre['name'] }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Get Movies</button>
+    </form>
 </body>
 </html>

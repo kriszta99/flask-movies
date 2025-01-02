@@ -1,31 +1,29 @@
 from flask import Flask, render_template
 import requests
-
-# Flask alkalmazás inicializálása
+#flask inicializlasa
 app = Flask(__name__)
 
-# TMDB API kulcs (cseréld ki a saját kulcsodra)
+# TMDB API kulcs 
 API_KEY = 'b0ff54d9f03d74a916ff2ecc5fa2ccd0'
 BASE_URL = 'https://api.themoviedb.org/3/'
 
-# Funkció a legnépszerűbb filmek lekérésére a TMDB API-ról
-def get_popular_movies():
+# filmes kategoriak lekerdezese a TMDB API-rol
+def get_genres():
     try:
-        url = f"{BASE_URL}movie/popular?api_key={API_KEY}&language=en-US&page=1"
+        url = f"{BASE_URL}genre/movie/list?api_key={API_KEY}&language=en-US"
         response = requests.get(url, timeout=10)
         response.raise_for_status()
-        return response.json().get('results', [])
+        genres = response.json().get('genres', [])
+        return genres
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching movies: {e}")
+        print(f"Error fetching genres: {e}")
         return []
-
-
-# Főoldal route
+#fooldal route
 @app.route('/')
 def index():
-    movies = get_popular_movies()
-    return render_template('index.html', movies=movies)
+    genre = get_genres()
+    return render_template('index.html', genre=genre)
 
-# Alkalmazás indítása
+# alkalmazas inditasa
 if __name__ == '__main__':
     app.run(debug=True)
