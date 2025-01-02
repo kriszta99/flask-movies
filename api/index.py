@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import requests
 #flask inicializlasa
 app = Flask(__name__)
@@ -24,7 +24,9 @@ def get_genres():
 @app.route('/', methods=['GET'])
 def index():
     genres = get_genres()
-    return render_template('index.html', genres=genres)
+    selected_genres = request.args.getlist('genre')  # a kivalasztott kategorijak listaja
+    return render_template('index.html', genres=genres, selected_genres=selected_genres)
+
 
 # alkalmazas inditasa
 if __name__ == '__main__':
