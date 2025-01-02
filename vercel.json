@@ -16,8 +16,12 @@
       "dest": "/api/index.py"
     },
     {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
+      "src": "api/static/(.*)",
+      "dest": "api/static/$1"
+    },
+    {
+      "src": "app/static/**/*",
+      "use": "@vercel/static"
     }
   ]
 }
