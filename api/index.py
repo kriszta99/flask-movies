@@ -14,17 +14,16 @@ def get_genres():
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         genres = response.json().get('genres', [])
+        print(f"Gneres:"{genres})
         return genres
     except requests.exceptions.RequestException as e:
         print(f"Error fetching genres: {e}")
         return []
+
 #fooldal route
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
-    genres = get_genres() 
-    if request.method == 'POST':
-        selected_genre = request.form.get('genre')  # a kivalasytott filmes kategoriaju id-ja
-        print(f"Kiválasztott kategória: {selected_genre}")
+    genres = get_genres()
     return render_template('index.html', genres=genres)
 
 # alkalmazas inditasa
