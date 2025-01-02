@@ -14,7 +14,7 @@ def get_genres():
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         genres = response.json().get('genres', [])
-        print(f"Gneres:"{genres})
+        print(f"Genres: {genres}")
         return genres
     except requests.exceptions.RequestException as e:
         print(f"Error fetching genres: {e}")
