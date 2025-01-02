@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>Filmes ajanló rendszer</title>
+
 </head>
 <body>
     <h1>Movie Recommendation</h1>
 
-    <!-- Kategória kiválasztása -->
-    <form method="POST">
-        <label for="genre">Select a Genre:</label>
-        <select name="genre" id="genre" required>
-            <option value="" disabled selected>Choose a genre</option>
-            {% for genre in genres %}
-                <option value="{{ genre['id'] }}">{{ genre['name'] }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Get Movies</button>
-    </form>
+    <!-- filmes kategoria kiválasztása -->
+
+    <div class="form-container">
+        <form method="POST">
+            <label for="genre">Select a Genre:</label>
+            <select name="genre" id="genre" required>
+                <option value="" disabled selected>Choose a genre</option>
+                {% for genre in genres %}
+                    <option value="{{ genres['id'] }}">{{ genres['name'] }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
 </body>
 </html>
