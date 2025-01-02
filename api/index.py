@@ -19,10 +19,13 @@ def get_genres():
         print(f"Error fetching genres: {e}")
         return []
 #fooldal route
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    genre = get_genres()
-    return render_template('index.html', genre=genre)
+    genres = get_genres() 
+    if request.method == 'POST':
+        selected_genre = request.form.get('genre')  # a kivalasytott filmes kategoriaju id-ja
+        print(f"Kiválasztott kategória: {selected_genre}")
+    return render_template('index.html', genres=genres)
 
 # alkalmazas inditasa
 if __name__ == '__main__':
