@@ -1,6 +1,8 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f5f5f5;
+}
+.f-genere{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -10,6 +12,7 @@ body {
 text-align: center;
 }
 .form-container {
+
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
@@ -17,6 +20,15 @@ text-align: center;
     width: 100%;
     max-width: 1000px; /* A maximális szélesség */
     flex-direction: row;
+
+}
+.selected-genres-container {
+    display:block;
+    background-color: #f5f5f5;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+
 }
 
 h3 {
@@ -55,3 +67,4 @@ button {
 button:hover {
     background-color: #45a049;
 }
+

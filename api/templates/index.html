@@ -13,7 +13,7 @@
 
 </head>
 <body>
-    <!-- filmes kategoria kivalasztasa -->
+    <!-- filmes kategoria kivalasztasa 
 
     <div class="form-container">
         <form method="GET">
@@ -31,5 +31,41 @@
             </div>
         </form>
     </div>
+-->
+<div class="f-genere">
+    <div class="form-container">
+        <!-- Form, ami a kiválasztott kategóriákat küldi -->
+        <form method="POST">
+            <h3>Select Genres:</h3>
+            <div class="checkbox-container">
+                <!-- A kategóriák ciklusban való megjelenítése checkboxokként -->
+                {% for genre in genres %}
+                    <label>
+                        <input type="checkbox" name="genre" value="{{ genre['id'] }}"> <!-- Kategóriák ID-ja a checkbox értéke -->
+                        {{ genre['name'] }} <!-- Kategória neve -->
+                    </label><br>
+                {% endfor %}
+            </div>
+            <div class="checkbox-container">
+                <button type="submit">Submit</button> <!-- Kattintás után elküldi a kiválasztott kategóriákat -->
+            </div>
+        </form>
+      
+     
+    </div>
+</div>    
+
+{% if selected_genres %}
+<div class="selected-genres-container">
+    <h3>Selected Genres:</h3>
+    <ul>
+        {% for genre in selected_genres %}
+            <li>{{ genre }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
 </body>
+    
 </html>
