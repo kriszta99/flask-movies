@@ -29,7 +29,7 @@ def get_genres():
 #lekerem a legnepszerubb filmeket TMDB API-ból
 def get_popular_movies():
     all_movies = []
-    for page in range(1, 50):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
+    for page in range(1, 5):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
         PARAMS['page'] = page
         response = requests.get(URL, params=PARAMS)
         if response.status_code == 200:
@@ -138,7 +138,7 @@ def index():
             error_message = "Please select at least one genre."
             return render_template('index.html', genres=genres, error_message=error_message)
 
-        global movies        
+        global movies
         best_movies = genetic_algorithm(population_size=10, generations=20, user_pref=user_pref)
         print(f"Best movies: {best_movies}")
 
