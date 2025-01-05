@@ -6,54 +6,36 @@
     <title>Filmes ajanló rendszer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> 
     <link rel="stylesheet" href="/api/static/css/styles.css">
-
-
-    
-
-
 </head>
 <body>
-    <!-- filmes kategoria kivalasztasa 
-
-    <div class="form-container">
-        <form method="GET">
-            <h3>Select Genres:</h3>
-            <div class="checkbox-container">
-                {% for genre in genres %}
-                    <label>
-                        <input type="checkbox" name="genre" value="{{ genre['id'] }}">
-                        {{ genre['name'] }}
-                    </label><br>
-                {% endfor %}
-            </div>
-            <div class="checkbox-container">
-                <button type="submit">Submit</button>
-            </div>
-        </form>
-    </div>
--->
 <div class="f-genere">
     <div class="form-container">
-        <!-- Form, ami a kiválasztott kategóriákat küldi -->
+        <!-- form, ami a kivalasztott kategoriákat kuldi  es hany filmet generaljon-->
         <form method="POST">
             <h3>Select Genres:</h3>
             <div class="checkbox-container">
-                <!-- A kategóriák ciklusban való megjelenítése checkboxokként -->
+                <!-- A kategoriak ciklusban valo megjelenitese checkboxokkent -->
                 {% for genre in genres %}
                     <label>
-                        <input type="checkbox" name="genre" value="{{ genre['id'] }}"> <!-- Kategóriák ID-ja a checkbox értéke -->
-                        {{ genre['name'] }} <!-- Kategória neve -->
+                        <input type="checkbox" name="genre" value="{{ genre['id'] }}"> 
+                        {{ genre['name'] }} 
                     </label><br>
                 {% endfor %}
+          
             </div>
             <div class="checkbox-container">
-                <button type="submit">Submit</button> <!-- Kattintás után elküldi a kiválasztott kategóriákat -->
+               
+                <button type="submit" >Submit</button> <!-- Kattintás után elküldi a kiválasztott kategóriákat -->
+                
             </div>
         </form>
       
      
     </div>
-</div>    
+</div>
+{% if error_message %}
+    <div class="error-message">{{ error_message }}</div>
+{% endif %}
 
 {% if selected_genres %}
 <div class="selected-genres-container">
@@ -63,8 +45,38 @@
             <li>{{ genre }}</li>
         {% endfor %}
     </ul>
+    <h3>Recommended Movies:</h3>
+    <div class="movies-container">
+        {% for movie in best_movies %}
+            <div class="movie-card">
+                <h3>{{ movie['title'] }}</h3>
+                <div class="movie-genres">
+                    <p><strong>Genres:</strong> 
+                        {% for genre_id in movie['genre_ids'] %}
+                            {% for genre in genres %}
+                                {% if genre['id'] == genre_id %}
+                                {{ genre['name'] }},{% if not loop.last %} {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </p>
+                </div>                
+                <div class="movie-poster">
+                    {% if movie.poster_path %}
+                        <img src="https://image.tmdb.org/t/p/w500{{ movie['poster_path'] }}" alt="{{ movie['title'] }} poster">
+                    {% else %}
+                        <p>No poster available</p>
+                    {% endif %}
+                </div>
+                <p><strong>Release Date:</strong> {{ movie['release_date'] }}</p>
+                <p><strong>Rating:</strong> {{ movie['vote_average'] }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
 </div>
-{% endif %}
+{% endif %} 
+
 
 </body>
     
