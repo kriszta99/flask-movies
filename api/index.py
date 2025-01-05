@@ -29,7 +29,7 @@ def get_genres():
 #lekerem a legnepszerubb filmeket TMDB API-ból
 def get_popular_movies():
     all_movies = []
-    for page in range(1, 10):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
+    for page in range(1, 3):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
         PARAMS['page'] = page
         response = requests.get(URL, params=PARAMS)
         if response.status_code == 200:
