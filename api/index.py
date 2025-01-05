@@ -29,7 +29,7 @@ def get_genres():
 #lekerem a legnepszerubb filmeket TMDB API-ból
 def get_popular_movies():
     all_movies = []
-    for page in range(1, 5):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
+    for page in range(1, 10):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
         PARAMS['page'] = page
         response = requests.get(URL, params=PARAMS)
         if response.status_code == 200:
@@ -56,67 +56,83 @@ def remove_duplicates(movies):
 def filter_movies_by_user_pref(user_pref):
     return [movie for movie in movies if any(genre_id in user_pref for genre_id in movie['genre_ids'])]
 
- # csak a felhasznalo altal preferalt filmekbol lesznek a kezdeti ertekek 
 def population_inicialization(user_pref):
-    valid_movies = filter_movies_by_user_pref(user_pref)
-    return random.sample(valid_movies, 3) 
+    return random.sample(movies, 3) 
 
 
 def fitness(individual, user_pref):
-    score_per_movie = []  # filmek pontszámai
-
+    # Filmek pontszámainak tárolása
+    score_per_movie = []
     for movie in individual:
-        genre_ids = movie.get("genre_ids", [])  # lekerjuk a film mufajait id-vel
-
-        # a mufaj id kat osszahasonlitom a felhasznalo mufajainak idjaival ha van egyezel novelem 
+        genre_ids = movie.get("genre_ids", [])  # A film műfajainak ID-jait szedjük ki
+        
+        # A felhasználó preferált műfajainak ID-jai
         match_score = 0
         for genre_id in genre_ids:
             if genre_id in user_pref:
-                match_score += 1  # novelem a pontszamot ha van egyezes
+                match_score += 1  # Egyezésnél növeljük a pontszámot
+        
+        # Minden filmhez hozzáadjuk a pontszámot
+        score_per_movie.append(match_score)
 
-        # aa a film rendelkezik legalabb 1 egyezessel (mufajlag) 
-        if match_score == len(user_pref):
-            score_per_movie.append(match_score )  # Műfaji pontszám összegzése
+    # Átlagpontszám kiszámítása az egyedhez (filmszett)
+    average_score = sum(score_per_movie) / len(score_per_movie) if score_per_movie else 0
 
-    return sum(score_per_movie)  # Visszatérünk a teljes pontszámmal
+    # Az összes műfaj ID összevetése a felhasználó preferenciáival
+    all_genres_in_individual = [genre_id for movie in individual for genre_id in movie.get("genre_ids", [])]
+    # Diverzitás bónusz: különböző műfajok egyezése, ami megnöveli a relevanciát
+    diversity_bonus = len(set(user_pref) & set(all_genres_in_individual))
+
+    # Súlyozott bónusz: az átlagpontszámhoz hozzáadott diverzitás
+    final_score = average_score + (diversity_bonus * 0.5)  # A bónusz súlyozása finomítva
+
+    return final_score
 
 
 def crossover(parent1, parent2, user_pref):
-    # csak azokat a filmeket valasztjuk a szulokbol, amelyek illeszkednek a mufajokhoz
-    selected_parent1 = filter_movies_by_user_pref(user_pref)
-    selected_parent2 = filter_movies_by_user_pref(user_pref)
+    # Véletlenszerű keresztezés
+    split = random.randint(1, min(len(parent1), len(parent2)) - 1)
+
+    # A szülők filmlistáját kombináljuk
+    child = parent1[:split] + parent2[split:]
     
-    # ha nincs ilyen film, akkor a suülok osszes filmjet figyelembe vesszuk
-    if not selected_parent1: selected_parent1 = parent1
-    if not selected_parent2: selected_parent2 = parent2
-    
-    split = random.randint(1, min(len(selected_parent1), len(selected_parent2)) - 1)
-    return selected_parent1[:split] + selected_parent2[split:]
+    return child
+
 
 def mutate(individual, user_pref):
     mutation_point = random.randint(0, len(individual) - 1)
-    # valasztunk egy veletlen filmet, ami illeszkedik a mufaj preferenciakhoz
+
+    # A mutáció során egy véletlen filmet választunk, amely illeszkedik a műfaj preferenciákhoz
     valid_movies = filter_movies_by_user_pref(user_pref)
-    individual[mutation_point] = random.choice(valid_movies)
+
+    if valid_movies:  # Ha van érvényes film
+        individual[mutation_point] = random.choice(valid_movies)
+
     return individual
 
 
 def genetic_algorithm(population_size, generations, user_pref):
     population = [population_inicialization(user_pref) for _ in range(population_size)]
  
+   
     for generation in range(generations):
         population.sort(key=lambda x: fitness(x, user_pref), reverse=True)
+
         parents = population[:2]
         new_population = []
 
+
+        # Keresztezes es mutacio minden uj egyedhez
         for _ in range(population_size // 2):
+            #keresztezes
             child = crossover(parents[0], parents[1], user_pref)
+            #mutacio
             child = mutate(child, user_pref)
+            #uj egyed hozzaadasa
             new_population.append(child)
 
         population = new_population
-
-    return remove_duplicates(population[0])
+    return remove_duplicates(population[0][:3])
 
 
 
@@ -138,7 +154,7 @@ def index():
             error_message = "Please select at least one genre."
             return render_template('index.html', genres=genres, error_message=error_message)
 
-        global movies
+        movies = get_popular_movies()
         best_movies = genetic_algorithm(population_size=10, generations=20, user_pref=user_pref)
         print(f"Best movies: {best_movies}")
 
