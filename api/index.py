@@ -29,7 +29,7 @@ def get_genres():
 #lekerem a legnepszerubb filmeket TMDB API-ból
 def get_popular_movies():
     all_movies = []
-    for page in range(1, 5):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
+    for page in range(1, 51):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
         PARAMS['page'] = page
         response = requests.get(URL, params=PARAMS)
         if response.status_code == 200:
@@ -41,6 +41,17 @@ def get_popular_movies():
     return all_movies
 
 movies = get_popular_movies()
+
+def remove_duplicates(movies):
+    # az 'id' kulcskent hasznalva 
+    movie_dict = {}
+    for movie in movies:
+        movie_id = movie['id']  # Minden film azonosítójának lekérése
+        movie_dict[movie_id] = movie  # A szótárban az azonosítóval tároljuk a filmet
+    
+    # A szótár értékeit alakítjuk listává
+    unique_movies = list(movie_dict.values())
+    return unique_movies
 
 def filter_movies_by_user_pref(user_pref):
     return [movie for movie in movies if any(genre_id in user_pref for genre_id in movie['genre_ids'])]
@@ -91,11 +102,9 @@ def mutate(individual, user_pref):
 
 
 def genetic_algorithm(population_size, generations, user_pref):
-    # Az első generáció filmes populációját úgy hozzuk létre, hogy minden film illeszkedjen a felhasználó műfaji preferenciáihoz
     population = [population_inicialization(user_pref) for _ in range(population_size)]
  
     for generation in range(generations):
-        # Az egész filmszett értékelése, figyelembe véve a műfaji egyezéseket
         population.sort(key=lambda x: fitness(x, user_pref), reverse=True)
         parents = population[:2]
         new_population = []
@@ -107,11 +116,10 @@ def genetic_algorithm(population_size, generations, user_pref):
 
         population = new_population
 
-    return population[0][:3]
+    return remove_duplicates(population[0])
 
 
 
-# Route to render index page and handle form submission
 @app.route('/', methods=['GET', 'POST'])
 def index():
     genres = get_genres()  
@@ -121,11 +129,11 @@ def index():
     error_message = None
 
     if request.method == 'POST':
-        selected_ids = request.form.getlist('genre')  # Műfajok id-jait választják
+        selected_ids = request.form.getlist('genre')  # mufajok id-jait 
         genre_dict = {str(genre['id']): genre['name'] for genre in genres}
         selected_genres = [genre_dict[genre_id] for genre_id in selected_ids if genre_id in genre_dict]
 
-        user_pref = [int(genre_id) for genre_id in selected_ids]  # Az id-ket tároljuk a preferenciában
+        user_pref = [int(genre_id) for genre_id in selected_ids]  
         if not user_pref:
             error_message = "Please select at least one genre."
             return render_template('index.html', genres=genres, error_message=error_message)
