@@ -29,7 +29,7 @@ def get_genres():
 #lekerem a legnepszerubb filmeket TMDB API-ból
 def get_popular_movies():
     all_movies = []
-    for page in range(1, 10):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
+    for page in range(1, 21):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
         PARAMS['page'] = page
         response = requests.get(URL, params=PARAMS)
         if response.status_code == 200:
@@ -178,7 +178,7 @@ def index():
                 selected_genres.append(genre_dict[genre_id])
 
         user_pref = [int(genre_id) for genre_id in selected_ids]  
-        
+
         if not selected_ids:
             error_message = "Please select at least one genre."
             return render_template('index.html', genres=genres, error_message=error_message)
