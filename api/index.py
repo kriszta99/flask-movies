@@ -13,7 +13,6 @@ PARAMS = {
     "language": "en-US",
 }
 
-movies = []
 # lekertem a TMDB API ból a filmek mufajait/kategoriajit
 def get_genres():
     try:
@@ -29,7 +28,7 @@ def get_genres():
 #lekerem a legnepszerubb filmeket TMDB API-ból
 def get_popular_movies():
     all_movies = []
-    for page in range(1, 31):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
+    for page in range(1, 51):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
         PARAMS['page'] = page
         response = requests.get(URL, params=PARAMS)
         if response.status_code == 200:
@@ -78,7 +77,7 @@ def fitness(individual, user_pref):
     
     return sum(score_per_movie) 
 
-def crossover(parent1, parent2, user_pref):
+def crossover(parent1, parent2):
     # veletlenszeru keresztezes
     #print(f"Paren1 :{parent1}")
     split = random.randint(1, len(parent1) - 1)
@@ -90,7 +89,7 @@ def crossover(parent1, parent2, user_pref):
 
 
 # mutacio
-def mutate(individual, movies, user_pref):
+def mutate(individual, movies):
     mutation_point = random.randint(0, len(individual) - 1)
     individual[mutation_point] = random.choice(movies)
     return individual
@@ -118,11 +117,11 @@ def genetic_algorithm(population_size, generations, movies, user_pref):
         for _ in range(population_size // 2):
     
             #keresztezes -> ket szulo kombinalasaval egy uj gyerek jon letre
-            child = crossover(parents[0], parents[1], user_pref)
-            print(parents[0], parents[1])
+            child = crossover(parents[0], parents[1])
+            #print(parents[0], parents[1])
             #mutacio -> a gyerek egyedet modositja egy veletlenszeru mutacioval
             
-            child = mutate(child, movies, user_pref)
+            child = mutate(child, movies)
             #uj egyed hozzaadasa
             new_population.append(child)
             
