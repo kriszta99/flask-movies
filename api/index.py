@@ -29,7 +29,7 @@ def get_genres():
 #lekerem a legnepszerubb filmeket TMDB API-ból
 def get_popular_movies():
     all_movies = []
-    for page in range(1, 21):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
+    for page in range(1, 31):  # oldalnyi filmet kerek le mivel 1 oldalon 20 darav vab
         PARAMS['page'] = page
         response = requests.get(URL, params=PARAMS)
         if response.status_code == 200:
@@ -40,7 +40,6 @@ def get_popular_movies():
             print(f"Error fetching page {page}: {response.status_code}")
     return all_movies
 
-#movies = get_popular_movies()
 
 def remove_duplicates(movies):
     # letrehozunk egy ures szotarat s a kulcsok a filmek 'id' lesz
@@ -57,14 +56,16 @@ def remove_duplicates(movies):
 
 
 def population_inicialization(movies):
-    return random.sample(movies, 100) 
+    return random.sample(movies,50) 
 
 
 def fitness(individual, user_pref):
     # a filmek pontszamainak tarolasa
+
     score_per_movie = []
     for movie in individual:
         genre_ids = movie.get("genre_ids", [])  # a film mufajainak ID-jait szedjuk ki
+
         
         match_score = 0
         #a film mufajainak (genre_ids) azonositoit osszehasonlitjuk a felhasznaloi preferenciakkal (user_pref)
@@ -74,19 +75,19 @@ def fitness(individual, user_pref):
         
         # minden filmhez hozzaadjuk a pontszamot
         score_per_movie.append(match_score)
-
     
-    return sum(score_per_movie)
+    return sum(score_per_movie) 
 
 def crossover(parent1, parent2, user_pref):
     # veletlenszeru keresztezes
     #print(f"Paren1 :{parent1}")
-    split = random.randint(1, min(len(parent1), len(parent2)) - 1)
+    split = random.randint(1, len(parent1) - 1)
     
     # utod letrehozasa ket szulo kombinalasaval
     child = parent1[:split] + parent2[split:]
     
     return child
+
 
 # mutacio
 def mutate(individual, movies, user_pref):
@@ -95,12 +96,14 @@ def mutate(individual, movies, user_pref):
     return individual
 
 
+ 
+
 def genetic_algorithm(population_size, generations, movies, user_pref):
     # az osszes filmszetett tartalmazza
     population = []
     for _ in range(population_size):
         population.append(population_inicialization(movies))
-    print(f"Populations: {population}")
+    #print(f"Populations: {population}")
    
     for generation in range(generations):
         #itt  tortenik a kivalasztas
@@ -108,22 +111,29 @@ def genetic_algorithm(population_size, generations, movies, user_pref):
         population.sort(key=lambda x: fitness(x, user_pref), reverse=True)
         # az elso ketot veszi ki
         parents = population[:2]
-
         new_population = []
 
 
         # Keresztezes es mutacio minden uj egyedhez
         for _ in range(population_size // 2):
+    
             #keresztezes -> ket szulo kombinalasaval egy uj gyerek jon letre
             child = crossover(parents[0], parents[1], user_pref)
+            print(parents[0], parents[1])
             #mutacio -> a gyerek egyedet modositja egy veletlenszeru mutacioval
+            
             child = mutate(child, movies, user_pref)
             #uj egyed hozzaadasa
             new_population.append(child)
+            
+            
 
         population = new_population
-    return remove_duplicates(population[0])
 
+    population.sort(key=lambda x: fitness(x, user_pref), reverse=True)
+    #print(population[0])
+    # Csak a legjobb egyed marad az utolsó generációból
+    return remove_duplicates(population[0])
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -151,14 +161,13 @@ def index():
         user_pref = [int(genre_id) for genre_id in selected_ids]  
 
         if not selected_ids:
-            error_message = "Please select at least one genre."
+            error_message = "Please select at least two genre."
             return render_template('index.html', genres=genres, error_message=error_message)
 
         movies = get_popular_movies()
-        best_movies = genetic_algorithm(population_size=150, generations=80,  movies=movies, user_pref=user_pref)
-        #print(f"Best movies: {best_movies}")
+        best_movies = genetic_algorithm(population_size=100, generations=50,  movies=movies, user_pref=user_pref)
 
-    
+        #print(f"Best movies: {best_movies}")
     return render_template('index.html', genres=genres, selected_genres=selected_genres, best_movies=best_movies)
 
 if __name__ == '__main__':

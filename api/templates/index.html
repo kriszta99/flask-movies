@@ -55,7 +55,7 @@
                         {% for genre_id in movie['genre_ids'] %}
                             {% for genre in genres %}
                                 {% if genre['id'] == genre_id %}
-                                {{ genre['name'] }},{% if not loop.last %} {% endif %}
+                                {{ genre['name'] }} ,{% if not loop.last %} {% endif %}
                                 {% endif %}
                             {% endfor %}
                         {% endfor %}
