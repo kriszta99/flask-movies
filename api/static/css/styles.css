@@ -33,6 +33,7 @@ text-align: center;
 
 h3 {
     text-align: center; /* szoveg kozepre igazitva*/
+    text-transform: uppercase; /*nagybetuve tenni*/
 }
 .checkbox-container {
     display: flex;
@@ -82,6 +83,119 @@ button:hover {
     height: auto;
 }
 .error-message {
-    color: red;
-    font-weight: bold;
+    display: inline-block;
+
 }
+.alert {
+    padding: 20px;
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .closebtn:hover {
+    color: black;
+  }
+
+
+
+
+/* A kártyák tárolója – minden kártyát rugalmasan helyezünk el egymás mellett */
+.recomend-container {
+    display: flex;              /* Flexbox használatával rendezzük a kártyákat */
+    flex-wrap: wrap;            /* A kártyák új sorba törhetnek, ha nincs elég hely */
+    justify-content: center;    /* Kártyák középre igazítása vízszintesen */
+    gap: 30px;                 /* Távolság a kártyák között */
+    padding: 20px;             /* Margó a tároló körül */
+}
+
+/* A flip-kártya alapstílusa – fix méret és 3D perspektíva */
+.flip-card {
+    background-color: transparent;  /* Átlátszó háttér */
+    width: 250px;                  /* Kártya fix szélessége */
+    height: 400px;                 /* Kártya fix magassága */
+    perspective: 1000px;           /* Perspektíva a 3D hatáshoz */
+}
+
+/* A kártya belső része, amelyet forgatunk */
+.flip-card-inner {
+    position: relative;            /* Relatív pozíció a belső elemekhez */
+    width: 100%;                  /* A belső tartalom szélessége igazodik a kártyához */
+    height: 100%;                 /* A belső tartalom magassága igazodik a kártyához */
+    text-align: center;           /* Szöveg középre igazítása */
+    transition: transform 0.8s;   /* Sima forgatás 0,8 másodperces átmenettel */
+    transform-style: preserve-3d; /* 3D hatás megőrzése forgatás közben */
+}
+
+/* Amikor az egér fölé kerül, a kártya megfordul */
+.flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);   /* Y tengely körüli forgatás 180 fokkal */
+}
+
+/* A kártya elülső és hátoldala */
+.flip-card-front, .flip-card-back {
+    position: absolute;            /* Pozícionálás a kártyán belül */
+    width: 100%;                  /* Az oldalak teljes szélessége */
+    height: 100%;                 /* Az oldalak teljes magassága */
+    backface-visibility: hidden;  /* Az aktuálisan nem látható oldal rejtve marad */
+    border-radius: 10px;          /* Lekerekített sarkok */
+    overflow: hidden;             /* A tartalom nem lóg ki a kártyából */
+}
+
+/* Elülső oldal – csak a kép és a cím overlay formájában */
+.flip-card-front {
+    background: #000;             /* Fekete háttér, ha nincs kép */
+}
+
+.flip-card-front img {
+    width: 100%;                  /* A kép szélessége a kártyához igazítva */
+    height: 100%;                 /* A kép magassága a kártyához igazítva */
+    object-fit: cover;            /* A kép kitölti a területet, megtartva az arányait */
+}
+
+/* Cím overlay az elülső oldalon */
+.title-overlay {
+    position: absolute;           /* A kép fölé helyezett szöveg */
+    bottom: 0;                    /* Az overlay az alsó részre kerül */
+    width: 100%;                  /* Az overlay teljes szélességű */
+    background: rgba(0, 0, 0, 0.7); /* Fekete áttetsző sáv a szöveg mögött */
+    color: white;                 /* Fehér szöveg szín */
+    padding: 10px;                /* Belül margó a szöveg körül */
+    font-size: 16px;              /* Betűméret */
+    font-weight: bold;            /* Félkövér szöveg */
+    box-sizing: border-box;       /* A padding a teljes szélesség részét képezi */
+}
+
+/* Hátsó oldal – részletes információk megjelenítése */
+.flip-card-back {
+    background-color: #333;       /* Sötét szürke háttér */
+    color: white;                 /* Fehér szöveg szín */
+    transform: rotateY(180deg);   /* Kezdetben 180 fokkal elforgatva, hogy rejtve maradjon */
+    display: flex;                /* Flexbox a tartalom középre igazításához */
+    flex-direction: column;       /* A tartalom függőleges elrendezése */
+    justify-content: center;      /* A tartalom középre igazítása függőlegesen */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Árnyék a kártya körül */
+    font-size: 14px;              /* Alap betűméret */
+}
+
+.flip-card-back h3 {
+    margin-bottom: 10px;          /* Térköz az alcím alatt */
+}
+
+.flip-card-back p {
+    margin: 5px 0;                /* Térköz a bekezdések között */
+    font-size: 14px;              /* Betűméret a részletekhez */
+}
+
+
+

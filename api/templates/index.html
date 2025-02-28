@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filmes ajanló rendszer</title>
+    <title>Filmes,sorozatos ajanló rendszer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> 
     <link rel="stylesheet" href="/api/static/css/styles.css">
+
 </head>
 <body>
 <div class="f-genere">
@@ -33,19 +34,105 @@
      
     </div>
 </div>
+<br><br>
+
 {% if error_message %}
-    <div class="error-message">{{ error_message }}</div>
+    <div class="error-message">
+        <div class="alert">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+            <strong>Error!</strong> {{ error_message }}
+          </div>
+           
+          </div>
+    </div>
 {% endif %}
+
 
 {% if selected_genres %}
 <div class="selected-genres-container">
-    <h3>Selected Genres:</h3>
-    <ul>
-        {% for genre in selected_genres %}
-            <li>{{ genre }}</li>
+    <br><br>
+    <h3>Recommended {% for genre in selected_genres %}
+        {{ genre }}
+    {% endfor %} movies:</h3>
+    <div class="recomend-container">
+        {% for movie in best_movies %}
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <!-- Front side (poster with title only) -->
+                    <div class="flip-card-front">
+                        {% if movie.poster_path %}
+                            <img src="https://image.tmdb.org/t/p/w500{{ movie['poster_path'] }}" alt="{{ movie['title'] }} poster">
+                        {% else %}
+                            <p>No poster available</p>
+                        {% endif %}
+                        <div class="title-overlay">
+                            <h3>{{ movie['title'] }}</h3>
+                        </div>
+                    </div>
+                    <!-- Back side (details with genres) -->
+                    <div class="flip-card-back">
+                        <h3>{{ movie['title'] }}</h3>
+                        <p><strong>Genres:</strong> 
+                            {% for genre_id in movie['genre_ids'] %}
+                                {% for genre in genres %}
+                                    {% if genre['id'] == genre_id %}
+                                        {{ genre['name'] }}{% if not loop.last %}, {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </p>
+                        <p><strong>Release Date:</strong> {{ movie['release_date'] }}</p>
+                        <p><strong>Rating:</strong> {{ movie['vote_average'] }}</p>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
-    </ul>
-    <h3>Recommended Movies:</h3>
+    </div>
+    <br><br>
+    <h3>Recommended {% for genre in selected_genres %}
+        {{ genre }}
+    {% endfor %} TV Shows:</h3>
+    <div class="recomend-container">
+        {% for tvShow in best_tv_shows %}
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <!--Front side (poster with title only)-->
+                    <div class="flip-card-front">
+                        {% if tvShow.poster_path %}
+                            <img src="https://image.tmdb.org/t/p/w500{{ tvShow['poster_path'] }}" alt="{{ tvShow['name'] }} poster">
+                        {% else %}
+                            <p>No poster available</p>
+                        {% endif %}
+                        <div class="title-overlay">
+                            <h3>{{ tvShow['name'] }}</h3>
+                        </div>
+                    </div>
+                    <!--Back side (details with genres)-->
+                    <div class="flip-card-back">
+                        <h3>{{ tvShow['name'] }}</h3>
+                        <p><strong>Genres:</strong> 
+                            {% for genre_id in tvShow['genre_ids'] %}
+                                {% for genre in genres %}
+                                    {% if genre['id'] == genre_id %}
+                                        {{ genre['name'] }}{% if not loop.last %}, {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </p>
+                        <p><strong>First date:</strong> {{ tvShow['first_air_date'] }}</p>
+                        <p><strong>Rating:</strong> {{ tvShow['vote_average'] }}</p>
+                        <p><strong>Popularity:</strong> {{ tvShow['popularity'] }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+</div>
+{% endif %} 
+
+
+    <!--<h3>Recommended Movies:</h3>
     <div class="movies-container">
         {% for movie in best_movies %}
             <div class="movie-card">
@@ -73,9 +160,7 @@
             </div>
         {% endfor %}
     </div>
-
-</div>
-{% endif %} 
+-->
 
 
 </body>
